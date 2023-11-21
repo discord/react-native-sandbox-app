@@ -1,0 +1,41 @@
+rootProject.name = 'rn_sandbox'
+
+include ':app'
+
+/**
+ * The :packages:react-native:* projects are imported a bit differently than what's recommended in
+ * the React Native documentation https://reactnative.dev/contributing/how-to-build-from-source
+ *
+ * The reason for this difference is because we're not consuming the React Native project as a
+ * NPM release, but rather a Github tarball. Therefore, we get the whole React Native project
+ * monorepo in the node_modules vs the expected react-native-directory-only structure. When we do
+ * that and use the documented includeBuild(...) line, we construct React Native's gradle projects
+ * via their settings.gradle file, which sets the location of that settings.gradle file as the
+ * project.rootProject location for the ReactAndroid and hermes-engine subprojects. This is
+ * problematic because the react-native-gradle-plugin relies on the project.rootProject to hold
+ * an instance of its "PrivateReact" extension object, which essentially allows a global state for
+ * certain gradle properties between projects. One of those gradle properties is codegenDir, which
+ * we need to set because of the way that consuming React Native tarball changes the folder
+ * structure. However, if the settings.gradle-includeBuild-strategy sets the project.rootProject
+ * differently than the android app's project, the ReactAndroid/hermes-engine subprojects don't
+ * get the updated codegenDir directory, thus breaking things.
+ *
+ * The fix here is to not use the strategy provided by the React Native project documentation,
+ * but instead directly include the ReactAndroid and hermes-engine projects here. Then, in the root
+ * build.gradle file of this app project, we define any plugins needed to execute the tasks defined
+ * in those project files. This allows all projects to share the same rootProject, and thus can
+ * share the properties defined in the app/build.gradle
+ */
+def reactNativeDirFromSettings = "../node_modules/react-native/packages/react-native"
+include ":packages:react-native:ReactAndroid"
+project(":packages:react-native:ReactAndroid").projectDir =
+        file("$reactNativeDirFromSettings/ReactAndroid")
+include ":packages:react-native:ReactAndroid:hermes-engine"
+project(":packages:react-native:ReactAndroid:hermes-engine").projectDir =
+        file("$reactNativeDirFromSettings/ReactAndroid/hermes-engine")
+
+apply from: file("../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesSettingsGradle(settings)
+
+// includeBuild('../node_modules/@react-native/gradle-plugin')
+// Modified from above to include from within local React Native location.
+includeBuild('../node_modules/react-native/packages/react-native-gradle-plugin')
