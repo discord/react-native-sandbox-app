@@ -1,8 +1,13 @@
-This is a new [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+This is a sandbox [**React Native**](https://reactnative.dev) project, bootstrapped using [`@react-native-community/cli`](https://github.com/react-native-community/cli).
+
+This project is modified to build React Native from source, where the React Native source is supplied via a Github commit from [a branch on Discord's React Native fork](https://github.com/discord/react-native/tree/sandbox-72.7).
+The goal of this project is to make it easier to contribute to the React Native project.
+
+Right now only building Android is supported; both Old Arch and New Arch builds are supported.
 
 # Getting Started
 
->**Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
+> **Note**: Make sure you have completed the [React Native - Environment Setup](https://reactnative.dev/docs/environment-setup) instructions till "Creating a new application" step, before proceeding.
 
 ## Step 1: Start the Metro Server
 
