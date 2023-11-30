@@ -22,3 +22,25 @@ buildscript {
         classpath("org.jetbrains.kotlin:kotlin-gradle-plugin:1.8.10")
     }
 }
+
+allprojects {
+    configurations.configureEach {
+        resolutionStrategy {
+            dependencySubstitution {
+                // We're building from source, so substitute all known RN/Hermes entities
+                // with the source projects.
+                // See discord_app/patches/@react-native+gradle-plugin+0.72.11.patch for RN's
+                // vanilla dependencySubstitution config that we opt out of.
+                def reactNativeProjectName = ":packages:react-native:ReactAndroid"
+                def hermesProjectName = ":packages:react-native:ReactAndroid:hermes-engine"
+
+                substitute module("com.facebook.react:react-native") with project(reactNativeProjectName)
+                substitute module("com.facebook.react:react-android") with project(reactNativeProjectName)
+
+                substitute module("com.facebook.react:hermes-engine") with project(hermesProjectName)
+                substitute module("com.facebook.react:hermes-android") with project(hermesProjectName)
+            }
+        }
+    }
+}
+

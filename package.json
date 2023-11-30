@@ -7,11 +7,16 @@
     "ios": "react-native run-ios",
     "lint": "eslint .",
     "start": "react-native start",
-    "test": "jest"
+    "test": "jest",
+    "postinstall": "patch-package"
   },
   "dependencies": {
+    "@shopify/flash-list": "https://github.com/markrickert/flash-list/archive/e8193961a1cc7acd9ea20d392428da6aef9ea7e6.tar.gz",
+    "@shopify/react-native-performance-lists-profiler": "^1.1.0",
+    "mkdirp": "^3.0.1",
     "react": "18.2.0",
-    "react-native": "https://github.com/discord/react-native/archive/386e6118b4808a0502fc8ffb220dfa89d1cc8736.tar.gz"
+    "react-native": "https://github.com/discord/react-native/archive/386e6118b4808a0502fc8ffb220dfa89d1cc8736.tar.gz",
+    "react-native-flipper": "^0.212.0"
   },
   "devDependencies": {
     "@babel/core": "^7.20.0",
@@ -38,8 +43,11 @@
     "deprecated-react-native-prop-types": "^4.2.3",
     "eslint": "^8.19.0",
     "jest": "^29.2.1",
+    "jsc-android": "^250231.0.0",
     "memoize-one": "^5.0.0",
     "metro-react-native-babel-preset": "0.76.8",
+    "patch-package": "^8.0.0",
+    "postinstall-postinstall": "^2.1.0",
     "prettier": "^2.4.1",
     "promise": "^8.3.0",
     "react-devtools-core": "^4.28.5",
