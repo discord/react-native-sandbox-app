@@ -4,7 +4,6 @@
  *
  * @format
  */
-
 import {FlashList} from '@shopify/flash-list';
 import {
   FlashListPerformanceView,
@@ -109,20 +108,20 @@ export default function App(): JSX.Element {
       <View style={styles.container}>
         <View style={styles.buttonRow}>
           <SelectViewButton
-            buttonText="FlashList"
+            buttonText="FlatList"
             currentSelectedView={selectedView}
             viewToSelect={0}
             setSelectedView={setSelectedView}
           />
           <SelectViewButton
-            buttonText="FlatList"
+            buttonText="FlashList"
             currentSelectedView={selectedView}
             viewToSelect={1}
             setSelectedView={setSelectedView}
           />
         </View>
-        {selectedView === 0 && <Flash />}
-        {selectedView === 1 && <Flat />}
+        {selectedView === 0 && <Flat />}
+        {selectedView === 1 && <Flash />}
       </View>
     </ListsProfiler>
   );
