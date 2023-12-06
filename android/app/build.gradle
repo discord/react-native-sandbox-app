@@ -4,6 +4,7 @@ apply plugin: "com.facebook.react"
 react {
     reactNativeDir = file("../../node_modules/react-native/packages/react-native")
     codegenDir = file("../../node_modules/react-native/packages/react-native-codegen")
+    hermesCommand = project.file("../../node_modules/react-native/packages/react-native/ReactAndroid/hermes-engine/build/hermes/bin/hermesc").toString()
 }
 
 /**
@@ -57,6 +58,75 @@ android {
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
         }
     }
+    packagingOptions {
+        jniLibs {
+            pickFirsts += ['lib/**/libc++_shared.so',
+                           'lib/**/libfabricjni.so',
+                           'lib/**/libfb.so',
+                           'lib/**/libfbjni.so',
+                           'lib/**/libfolly_runtime.so',
+                           'lib/**/libglog.so',
+                           'lib/**/libglog_init.so',
+                           'lib/**/libhermes-executor-release.so',
+                           'lib/**/libjscexecutor.so',
+                           'lib/**/libjsi.so',
+                           'lib/**/libjsijniprofiler.so',
+                           'lib/**/libjsinspector.so',
+                           'lib/**/liblogger.so',
+                           'lib/**/libmapbufferjni.so',
+                           'lib/**/libreact_codegen_rncore.so',
+                           'lib/**/libreact_config.so',
+                           'lib/**/libreact_debug.so',
+                           'lib/**/libreact_nativemodule_core.so',
+                           'lib/**/libreact_newarchdefaults.so',
+                           'lib/**/libreact_render_animations.so',
+                           'lib/**/libreact_render_attributedstring.so',
+                           'lib/**/libreact_render_componentregistry.so',
+                           'lib/**/libreact_render_core.so',
+                           'lib/**/libreact_render_debug.so',
+                           'lib/**/libreact_render_element.so',
+                           'lib/**/libreact_render_graphics.so',
+                           'lib/**/libreact_render_imagemanager.so',
+                           'lib/**/libreact_render_leakchecker.so',
+                           'lib/**/libreact_render_mapbuffer.so',
+                           'lib/**/libreact_render_mounting.so',
+                           'lib/**/libreact_render_runtimescheduler.so',
+                           'lib/**/libreact_render_scheduler.so',
+                           'lib/**/libreact_render_telemetry.so',
+                           'lib/**/libreact_render_templateprocessor.so',
+                           'lib/**/libreact_render_textlayoutmanager.so',
+                           'lib/**/libreact_render_uimanager.so',
+                           'lib/**/libreact_utils.so',
+                           'lib/**/libreactnativeblob.so',
+                           'lib/**/libreactnativejni.so',
+                           'lib/**/libreactperfloggerjni.so',
+                           'lib/**/librrc_image.so',
+                           'lib/**/librrc_legacyviewmanagerinterop.so',
+                           'lib/**/librrc_root.so',
+                           'lib/**/librrc_scrollview.so',
+                           'lib/**/librrc_text.so',
+                           'lib/**/librrc_textinput.so',
+                           'lib/**/librrc_unimplementedview.so',
+                           'lib/**/librrc_view.so',
+                           'lib/**/libruntimeexecutor.so',
+                           'lib/**/libturbomodulejsijni.so',
+                           'lib/**/libyoga.so',
+                           'lib/**/libdiscord.so'
+            ]
+        }
+    }
+
+    flavorDimensions "architecture"
+    productFlavors {
+        fabric {
+            dimension "architecture"
+            applicationId = "com.rn_sandbox.fabric"
+        }
+        paper {
+            dimension "architecture"
+            applicationId "com.rn_sandbox.paper"
+        }
+    }
 }
 
 dependencies {
@@ -65,7 +135,7 @@ dependencies {
 
     debugImplementation("com.facebook.flipper:flipper:${FLIPPER_VERSION}")
     debugImplementation("com.facebook.flipper:flipper-network-plugin:${FLIPPER_VERSION}") {
-        exclude group:'com.squareup.okhttp3', module:'okhttp'
+        exclude group: 'com.squareup.okhttp3', module: 'okhttp'
     }
 
     debugImplementation("com.facebook.flipper:flipper-fresco-plugin:${FLIPPER_VERSION}")
@@ -81,5 +151,36 @@ dependencies {
         }
     }
 }
+
+def checkArchPropTask = tasks.register("checkArchProp") {
+    doFirst {
+        def newArchEnabled = project.hasProperty("newArchEnabled") ? project.newArchEnabled.toBoolean() : null
+        if (newArchEnabled == null) {
+            throw new GradleException("Can't find newArchEnabled property definition")
+        }
+
+        if (gradle.startParameter.taskNames.isEmpty()) {
+            return
+        }
+
+        def startTask = gradle.startParameter.taskNames.get(0)
+        def pattern = /[A-Z][a-z]*/
+        def matcher = (startTask =~ pattern)
+        if (!matcher.find()) {
+            // Must not be running an assemble/bundle task
+            return
+        }
+
+        def flavor = matcher.group().toLowerCase()
+        if ((flavor == "fabric" && !newArchEnabled) || (flavor == "paper" && newArchEnabled)) {
+            throw new GradleException("You're currently trying to build a ${flavor} flavor " +
+                    "via task '${startTask}', but your newArchEnabled property is not the correct value. " +
+                    "If you're building paper, set newArchEnabled to false. " +
+                    "If you're building fabric, set newArchEnabled to true.")
+        }
+    }
+}
+
+preBuild.dependsOn checkArchPropTask
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
