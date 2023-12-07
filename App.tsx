@@ -39,7 +39,7 @@ const styles = StyleSheet.create({
   },
   button: {
     flex: 1,
-    height: 40,
+    height: 200,
     justifyContent: 'center',
     borderColor: 'black',
     borderWidth: 2,
@@ -99,27 +99,29 @@ export default function App(): JSX.Element {
     [],
   );
 
-  const [selectedView, setSelectedView] = useState(0);
+  const [selectedView, setSelectedView] = useState(-1);
 
   return (
     <ListsProfiler
       onInteractive={onInteractiveCallback}
       onBlankArea={onBlankAreaCallback}>
       <View style={styles.container}>
-        <View style={styles.buttonRow}>
-          <SelectViewButton
-            buttonText="FlatList"
-            currentSelectedView={selectedView}
-            viewToSelect={0}
-            setSelectedView={setSelectedView}
-          />
-          <SelectViewButton
-            buttonText="FlashList"
-            currentSelectedView={selectedView}
-            viewToSelect={1}
-            setSelectedView={setSelectedView}
-          />
-        </View>
+        {selectedView === -1 && (
+          <View style={styles.buttonRow}>
+            <SelectViewButton
+              buttonText="FlatList"
+              currentSelectedView={selectedView}
+              viewToSelect={0}
+              setSelectedView={setSelectedView}
+            />
+            <SelectViewButton
+              buttonText="FlashList"
+              currentSelectedView={selectedView}
+              viewToSelect={1}
+              setSelectedView={setSelectedView}
+            />
+          </View>
+        )}
         {selectedView === 0 && <Flat />}
         {selectedView === 1 && <Flash />}
       </View>
