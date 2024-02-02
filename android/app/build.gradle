@@ -118,9 +118,17 @@ android {
 
     flavorDimensions "architecture"
     productFlavors {
+        fabricOld {
+            dimension "architecture"
+            applicationId = "com.rn_sandbox.fabric_old"
+        }
         fabric {
             dimension "architecture"
             applicationId = "com.rn_sandbox.fabric"
+        }
+        paperOld {
+            dimension "architecture"
+            applicationId = "com.rn_sandbox.paper_old"
         }
         paper {
             dimension "architecture"

@@ -5,11 +5,6 @@
  * @format
  */
 import {FlashList} from '@shopify/flash-list';
-import {
-  FlashListPerformanceView,
-  FlatListPerformanceView,
-  ListsProfiler,
-} from '@shopify/react-native-performance-lists-profiler';
 import React, {
   Dispatch,
   SetStateAction,
@@ -84,48 +79,29 @@ const styles = StyleSheet.create({
 });
 
 export default function App(): JSX.Element {
-  const onInteractiveCallback = useCallback((TTI: number, listName: string) => {
-    console.log(`RNSANDBOX ${listName}'s TTI: ${TTI}`);
-  }, []);
-  const onBlankAreaCallback = useCallback(
-    (offsetStart: number, offsetEnd: number, listName: string) => {
-      console.log(
-        `RNSANDBOX Blank area for ${listName}: ${Math.max(
-          offsetStart,
-          offsetEnd,
-        )}`,
-      );
-    },
-    [],
-  );
-
   const [selectedView, setSelectedView] = useState(-1);
 
   return (
-    <ListsProfiler
-      onInteractive={onInteractiveCallback}
-      onBlankArea={onBlankAreaCallback}>
-      <View style={styles.container}>
-        {selectedView === -1 && (
-          <View style={styles.buttonRow}>
-            <SelectViewButton
-              buttonText="FlatList"
-              currentSelectedView={selectedView}
-              viewToSelect={0}
-              setSelectedView={setSelectedView}
-            />
-            <SelectViewButton
-              buttonText="FlashList"
-              currentSelectedView={selectedView}
-              viewToSelect={1}
-              setSelectedView={setSelectedView}
-            />
-          </View>
-        )}
-        {selectedView === 0 && <Flat />}
-        {selectedView === 1 && <Flash />}
-      </View>
-    </ListsProfiler>
+    <View style={styles.container}>
+      {selectedView === -1 && (
+        <View style={styles.buttonRow}>
+          <SelectViewButton
+            buttonText="FlatList"
+            currentSelectedView={selectedView}
+            viewToSelect={0}
+            setSelectedView={setSelectedView}
+          />
+          <SelectViewButton
+            buttonText="FlashList"
+            currentSelectedView={selectedView}
+            viewToSelect={1}
+            setSelectedView={setSelectedView}
+          />
+        </View>
+      )}
+      {selectedView === 0 && <Flat />}
+      {selectedView === 1 && <Flash />}
+    </View>
   );
 }
 
@@ -171,30 +147,22 @@ function Flat() {
   }, []);
 
   return (
-    <FlatListPerformanceView
-      style={[styles.flat, styles.listContainer]}
-      listName="FlatList">
-      <FlatList
-        data={data.current}
-        renderItem={renderItem}
-        keyExtractor={keyExtractor}
-      />
-    </FlatListPerformanceView>
+    <FlatList
+      data={data.current}
+      renderItem={renderItem}
+      keyExtractor={keyExtractor}
+    />
   );
 }
 
 function Flash() {
   const data = useRef(Array.from(Array(500).keys()));
   return (
-    <FlashListPerformanceView
-      listName="FlashList"
-      style={[styles.flash, styles.listContainer]}>
-      <FlashList
-        data={data.current}
-        renderItem={({index}) => <ListItem index={index} isFlashList={true} />}
-        estimatedItemSize={50}
-      />
-    </FlashListPerformanceView>
+    <FlashList
+      data={data.current}
+      renderItem={({index}) => <ListItem index={index} isFlashList={true} />}
+      estimatedItemSize={50}
+    />
   );
 }
 

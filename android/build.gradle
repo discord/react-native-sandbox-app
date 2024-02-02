@@ -34,11 +34,11 @@ allprojects {
                 def reactNativeProjectName = ":packages:react-native:ReactAndroid"
                 def hermesProjectName = ":packages:react-native:ReactAndroid:hermes-engine"
 
-                substitute module("com.facebook.react:react-native") with project(reactNativeProjectName)
-                substitute module("com.facebook.react:react-android") with project(reactNativeProjectName)
+                substitute module("com.facebook.react:react-native") using project(reactNativeProjectName)
+                substitute module("com.facebook.react:react-android") using project(reactNativeProjectName)
 
-                substitute module("com.facebook.react:hermes-engine") with project(hermesProjectName)
-                substitute module("com.facebook.react:hermes-android") with project(hermesProjectName)
+                substitute module("com.facebook.react:hermes-engine") using project(hermesProjectName)
+                substitute module("com.facebook.react:hermes-android") using project(hermesProjectName)
             }
         }
     }

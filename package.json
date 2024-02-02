@@ -11,8 +11,7 @@
     "postinstall": "patch-package"
   },
   "dependencies": {
-    "@shopify/flash-list": "https://github.com/markrickert/flash-list/archive/e8193961a1cc7acd9ea20d392428da6aef9ea7e6.tar.gz",
-    "@shopify/react-native-performance-lists-profiler": "^1.1.0",
+    "@shopify/flash-list": "https://github.com/markrickert/flash-list/archive/77c9452c9045ac12f4b9a8b22e9ac4af53195e82.tar.gz",
     "mkdirp": "^3.0.1",
     "react": "18.2.0",
     "react-native": "https://github.com/discord/react-native/archive/386e6118b4808a0502fc8ffb220dfa89d1cc8736.tar.gz",
