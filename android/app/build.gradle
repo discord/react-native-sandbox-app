@@ -112,21 +112,21 @@ android {
 
     flavorDimensions "architecture"
     productFlavors {
-        fabricOld {
+        fabric72 {
             dimension "architecture"
-            applicationId = "com.rn_sandbox.fabric_old"
+            applicationId = "com.rn_sandbox.fabric_72"
         }
-        fabric {
+        fabric73 {
             dimension "architecture"
-            applicationId = "com.rn_sandbox.fabric"
+            applicationId = "com.rn_sandbox.fabric_73"
         }
-        paperOld {
+        paper72 {
             dimension "architecture"
-            applicationId = "com.rn_sandbox.paper_old"
+            applicationId = "com.rn_sandbox.paper_72"
         }
-        paper {
+        paper73 {
             dimension "architecture"
-            applicationId "com.rn_sandbox.paper"
+            applicationId "com.rn_sandbox.paper_73"
         }
     }
 }
@@ -172,14 +172,21 @@ def checkFlavorAndPropsTask = tasks.register("checkFlavorAndProps") {
         }
 
         def startTask = gradle.startParameter.taskNames.get(0)
-        def pattern = /[A-Z][a-z]*/
+        def pattern = /[A-Z]*[0-9]*[a-z]*/
         def matcher = (startTask =~ pattern)
-        if (!matcher.find()) {
-            // Must not be running an assemble/bundle task
+        def matches = new ArrayList<String>();
+        while (matcher.find()) {
+            matches.add(matcher.group().toLowerCase())
+        }
+
+        // i.e. For a startTask like :app:assembleFabric72Debug,
+        // matches should be "app", "assemble", fabric", "72" debug"
+        if (matches.size() < 5) {
+            // Unknown start task.
             return
         }
 
-        def archFlavor = matcher.group().toLowerCase()
+        def archFlavor = matches.get(2)
         if ((archFlavor == "fabric" && !newArchEnabled) || (archFlavor == "paper" && newArchEnabled)) {
             throw new GradleException("You're currently trying to build a ${archFlavor} flavor " +
                     "via task '${startTask}', but your newArchEnabled property is not the correct value. " +
@@ -187,11 +194,8 @@ def checkFlavorAndPropsTask = tasks.register("checkFlavorAndProps") {
                     "If you're building fabric, set newArchEnabled to true.")
         }
 
-        if (!matcher.find()) {
-            throw new GradleException("Start task is ${startTask}, but can't determine whether we should be running RN 72 or 73.")
-        }
-
-        def versionFlavor = matcher.group().toLowerCase()
+        def versionFlavor = matches.get(3)
+        println("versionFlavor ${versionFlavor}")
         if ((versionFlavor == "new" && rnVersion == 72) || (versionFlavor == "old" && rnVersion == 73)) {
             throw new GradleException("You're currently try to build React Native version ${rnVersion} " +
                     "via task '${startTask}'. Please switch your flavor to the correct 'old' or 'new' variant.")
