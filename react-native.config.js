@@ -15,5 +15,4 @@ module.exports = {
       dependencyConfig: android.dependencyConfig,
     },
   },
-  reactNativePath: 'node_modules/react-native/packages/react-native',
 };

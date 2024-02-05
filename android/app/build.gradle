@@ -1,12 +1,6 @@
 apply plugin: "com.android.application"
 apply plugin: "com.facebook.react"
 
-react {
-    reactNativeDir = file("../../node_modules/react-native/packages/react-native")
-    codegenDir = file("../../node_modules/react-native/packages/react-native-codegen")
-    hermesCommand = project.file("../../node_modules/react-native/packages/react-native/ReactAndroid/hermes-engine/build/hermes/bin/hermesc").toString()
-}
-
 /**
  * Set this to true to Run Proguard on Release builds to minify the Java bytecode.
  */
@@ -167,10 +161,8 @@ def checkFlavorAndPropsTask = tasks.register("checkFlavorAndProps") {
             throw new GradleException("Can't find newArchEnabled property definition")
         }
 
-        def reactNativeRootDir = project(':packages:react-native:ReactAndroid').projectDir.parent
-
         def reactProperties = new Properties()
-        file("$reactNativeRootDir/ReactAndroid/gradle.properties").withInputStream { reactProperties.load(it) }
+        file("../../node_modules/react-native/ReactAndroid/gradle.properties").withInputStream { reactProperties.load(it) }
         def rnVersion = reactProperties.getProperty("VERSION_NAME").split("\\.")[1].toInteger()
 
         println("REACT_NATIVE_MINOR_VERSION ${rnVersion}")
