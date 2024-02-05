@@ -160,12 +160,20 @@ dependencies {
     }
 }
 
-def checkArchPropTask = tasks.register("checkArchProp") {
+def checkFlavorAndPropsTask = tasks.register("checkFlavorAndProps") {
     doFirst {
         def newArchEnabled = project.hasProperty("newArchEnabled") ? project.newArchEnabled.toBoolean() : null
         if (newArchEnabled == null) {
             throw new GradleException("Can't find newArchEnabled property definition")
         }
+
+        def reactNativeRootDir = project(':packages:react-native:ReactAndroid').projectDir.parent
+
+        def reactProperties = new Properties()
+        file("$reactNativeRootDir/ReactAndroid/gradle.properties").withInputStream { reactProperties.load(it) }
+        def rnVersion = reactProperties.getProperty("VERSION_NAME").split("\\.")[1].toInteger()
+
+        println("REACT_NATIVE_MINOR_VERSION ${rnVersion}")
 
         if (gradle.startParameter.taskNames.isEmpty()) {
             return
@@ -179,16 +187,26 @@ def checkArchPropTask = tasks.register("checkArchProp") {
             return
         }
 
-        def flavor = matcher.group().toLowerCase()
-        if ((flavor == "fabric" && !newArchEnabled) || (flavor == "paper" && newArchEnabled)) {
-            throw new GradleException("You're currently trying to build a ${flavor} flavor " +
+        def archFlavor = matcher.group().toLowerCase()
+        if ((archFlavor == "fabric" && !newArchEnabled) || (archFlavor == "paper" && newArchEnabled)) {
+            throw new GradleException("You're currently trying to build a ${archFlavor} flavor " +
                     "via task '${startTask}', but your newArchEnabled property is not the correct value. " +
                     "If you're building paper, set newArchEnabled to false. " +
                     "If you're building fabric, set newArchEnabled to true.")
         }
+
+        if (!matcher.find()) {
+            throw new GradleException("Start task is ${startTask}, but can't determine whether we should be running RN 72 or 73.")
+        }
+
+        def versionFlavor = matcher.group().toLowerCase()
+        if ((versionFlavor == "new" && rnVersion == 72) || (versionFlavor == "old" && rnVersion == 73)) {
+            throw new GradleException("You're currently try to build React Native version ${rnVersion} " +
+                    "via task '${startTask}'. Please switch your flavor to the correct 'old' or 'new' variant.")
+        }
     }
 }
 
-preBuild.dependsOn checkArchPropTask
+preBuild.dependsOn checkFlavorAndPropsTask
 
 apply from: file("../../node_modules/@react-native-community/cli-platform-android/native_modules.gradle"); applyNativeModulesAppBuildGradle(project)
