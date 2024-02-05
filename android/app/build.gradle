@@ -180,13 +180,16 @@ def checkFlavorAndPropsTask = tasks.register("checkFlavorAndProps") {
         }
 
         // i.e. For a startTask like :app:assembleFabric72Debug,
-        // matches should be "app", "assemble", fabric", "72" debug"
+        // matches should be "", "app", "", "assemble", fabric", "72" debug"
         if (matches.size() < 5) {
             // Unknown start task.
             return
         }
 
-        def archFlavor = matches.get(2)
+        def archFlavor = matches.get(4)
+        def versionFlavor = matches.get(5)
+        println("Detected arch ${archFlavor}, RN version ${versionFlavor}")
+
         if ((archFlavor == "fabric" && !newArchEnabled) || (archFlavor == "paper" && newArchEnabled)) {
             throw new GradleException("You're currently trying to build a ${archFlavor} flavor " +
                     "via task '${startTask}', but your newArchEnabled property is not the correct value. " +
@@ -194,8 +197,6 @@ def checkFlavorAndPropsTask = tasks.register("checkFlavorAndProps") {
                     "If you're building fabric, set newArchEnabled to true.")
         }
 
-        def versionFlavor = matches.get(3)
-        println("versionFlavor ${versionFlavor}")
         if ((versionFlavor == "new" && rnVersion == 72) || (versionFlavor == "old" && rnVersion == 73)) {
             throw new GradleException("You're currently try to build React Native version ${rnVersion} " +
                     "via task '${startTask}'. Please switch your flavor to the correct 'old' or 'new' variant.")
