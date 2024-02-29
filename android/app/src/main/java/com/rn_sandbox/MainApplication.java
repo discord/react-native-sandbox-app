@@ -56,8 +56,9 @@ public class MainApplication extends Application implements ReactApplication {
   @Override
   public void onCreate() {
     super.onCreate();
-    ReactFeatureFlags.enableFabricLogs = true;
-    FLogDefaultLoggingDelegate.getInstance().setMinimumLoggingLevel(Log.VERBOSE);
+//    ReactFeatureFlags.enableFabricLogs = true;
+//    ReactFeatureFlags.enableClonelessStateProgression = true;
+//    FLogDefaultLoggingDelegate.getInstance().setMinimumLoggingLevel(Log.VERBOSE);
 
     SoLoader.init(this, /* native exopackage */ false);
     if (BuildConfig.IS_NEW_ARCHITECTURE_ENABLED) {

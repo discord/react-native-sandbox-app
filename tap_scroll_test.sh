@@ -6,7 +6,7 @@ sleep 2
 while :
 do
   echo "swipe down $swipe_down_count"
-  adb shell "input touchscreen swipe 200 800 200 200 200"
+  adb shell "input touchscreen swipe 200 800 200 200 100"
   ((swipe_down_count += 1))
-  sleep 0.2
+  sleep 0.1
 done

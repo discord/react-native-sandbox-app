@@ -197,10 +197,12 @@ def checkFlavorAndPropsTask = tasks.register("checkFlavorAndProps") {
                     "If you're building fabric, set newArchEnabled to true.")
         }
 
-        if ((versionFlavor == "new" && rnVersion == 72) || (versionFlavor == "old" && rnVersion == 73)) {
-            throw new GradleException("You're currently try to build React Native version ${rnVersion} " +
+        if ((versionFlavor != "72" && rnVersion == 72) || (versionFlavor != "73" && rnVersion == 73)) {
+            throw new GradleException("You're currently trying to build React Native version ${rnVersion} " +
                     "via task '${startTask}'. Please switch your flavor to the correct 'old' or 'new' variant.")
         }
+
+        println("Flavor matches Arch and Version!")
     }
 }
 

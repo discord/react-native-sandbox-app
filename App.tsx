@@ -23,6 +23,8 @@ import {
   View,
 } from 'react-native';
 
+const LIST_SIZE = 500;
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -135,9 +137,18 @@ function SelectViewButton({
 }
 
 function Flat() {
-  const data = useRef(Array.from(Array(500).keys()));
+  const data = useRef(Array.from(Array(LIST_SIZE).keys()));
+  const startTime = useRef(Date.now());
   const renderItem: ListRenderItem<number> = useCallback(
     (info: ListRenderItemInfo<number>) => {
+      console.log(`Index: ${info.index}`);
+      if (info.index === LIST_SIZE - 1) {
+        console.log(
+          `Rendering Last Item! Time: ${
+            (Date.now() - startTime.current) / 1000
+          }`,
+        );
+      }
       return <ListItem index={info.index} isFlashList={false} />;
     },
     [],
@@ -156,7 +167,7 @@ function Flat() {
 }
 
 function Flash() {
-  const data = useRef(Array.from(Array(500).keys()));
+  const data = useRef(Array.from(Array(LIST_SIZE).keys()));
   return (
     <FlashList
       data={data.current}
